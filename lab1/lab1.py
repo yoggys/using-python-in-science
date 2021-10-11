@@ -23,8 +23,8 @@ def initParser():
     parser.add_argument('--filename', help="Path to read file from", type=str, default=f"{os.path.dirname(os.path.abspath(__file__))}"+"\\text.txt")
     parser.add_argument('--amount', help="Amount of displayed words",type=int, default=10)
     parser.add_argument('--length', help="Minimum length of word",type=int, default=0)
-    parser.add_argument('--start', help="First color of gradient", type=str, default="red")
-    parser.add_argument('--end', help="Last color of gradient", type=str, default="green")
+    parser.add_argument('--start', help="First color of gradient (eng. name or #HEX code)", type=str, default="red")
+    parser.add_argument('--end', help="Last color of gradient (eng. name or #HEX code)", type=str, default="green")
     parser.add_argument('--ignored', help="List of ignored words",nargs='+', type=list, default=[])
 
     return parser
@@ -40,8 +40,15 @@ if __name__ == "__main__":
     labels = np.array(labels)
     values = np.array(values)
     
-    red = Color(args.start)
-    colors = list(red.range_to(Color(args.end), args.amount))
+    try:
+        red = Color(args.start)
+        colors = list(red.range_to(Color(args.end), args.amount))
+    except:
+        print(f"One of following colors is not recognized {args.start} or {args.end}")
+        print(f"Setting to default color - red and green.")
+        red = Color("red")
+        colors = list(red.range_to(Color("green"), args.amount))
+
     colors = [color.rgb for color in colors]
 
     graph = Pyasciigraph()
