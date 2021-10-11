@@ -11,8 +11,8 @@ optional arguments:
   --filename FILENAME   Path to read file from
   --amount AMOUNT       Amount of displayed words
   --length LENGTH       Minimum length of word
-  --start START         First color of gradient
-  --end END             Last color of gradient
+  --start START         First color of gradient (eng. name or #HEX code)
+  --end END             Last color of gradient (eng. name or #HEX code)
   --ignored IGNORED [IGNORED ...]
                         List of ignored words
 ```
