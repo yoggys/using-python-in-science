@@ -41,13 +41,13 @@ if __name__ == "__main__":
     values = np.array(values)
     
     try:
-        red = Color(args.start)
-        colors = list(red.range_to(Color(args.end), args.amount))
+        start = Color(args.start)
+        colors = list(start.range_to(Color(args.end), args.amount))
     except:
         print(f"One of following colors is not recognized {args.start} or {args.end}")
         print(f"Setting to default color - red and green.")
-        red = Color("red")
-        colors = list(red.range_to(Color("green"), args.amount))
+        start = Color("red")
+        colors = list(start.range_to(Color("green"), args.amount))
 
     colors = [color.rgb for color in colors]
 
