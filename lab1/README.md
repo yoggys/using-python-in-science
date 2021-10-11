@@ -1,4 +1,4 @@
-## Lab1 
+## Lab1 - text file word counter
 
 For more info run:
 ```
