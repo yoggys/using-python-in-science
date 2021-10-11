@@ -8,7 +8,7 @@ python lab1.py --help
 ```
 optional arguments:
   -h, --help            show this help message and exit
-  --filename FILENAME   Path to read file from
+  --filename FILENAME   Path to file
   --amount AMOUNT       Amount of displayed words
   --length LENGTH       Minimum length of word
   --start START         First color of gradient (eng. name or #HEX code)
