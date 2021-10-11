@@ -22,7 +22,7 @@ optional arguments:
 - `python .\lab1.py`
 ![image](https://user-images.githubusercontent.com/61660055/136831695-1d0c6bcc-1d77-42dd-ac85-e8e0424be24b.png)
 
-- `python .\lab1.py --length 5 --amount 20 --start "#ffffff" --end "#8877CC"` (using color #HEX, remember to user quotes)
+- `python .\lab1.py --length 5 --amount 20 --start "#ffffff" --end "#8877CC"` (using color #HEX, **remember to use quotes**)
 ![image](https://user-images.githubusercontent.com/61660055/136834921-611b0f25-0708-484f-bc41-2d67cb8fa106.png)
 
 - `python .\lab1.py --length 5 --amount 20 --start blue --end red --ignore przez gdzie potem` (using color names)
