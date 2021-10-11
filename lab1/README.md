@@ -17,7 +17,7 @@ optional arguments:
                         List of ignored words
 ```
 
-Examples:
+# Examples:
 
 - `python .\lab1.py`
 ![image](https://user-images.githubusercontent.com/61660055/136831695-1d0c6bcc-1d77-42dd-ac85-e8e0424be24b.png)
