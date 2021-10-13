@@ -6,15 +6,26 @@ python lab1.py --help
 ```
 
 ```
-optional arguments:
+Optional arguments:
   -h, --help            show this help message and exit
-  --filename FILENAME   Path to file
-  --amount AMOUNT       Amount of displayed words
-  --length LENGTH       Minimum length of word
-  --start START         First color of gradient (eng. name or #HEX code)
-  --end END             Last color of gradient (eng. name or #HEX code)
-  --ignored IGNORED [IGNORED ...]
+  --filename FILENAME   Path to file - default text.txt
+  --amount AMOUNT       Amount of displayed words - default 10
+  --length LENGTH       Minimum length of word - default 0
+  --start START         First color of gradient (eng. name or #HEX code) - default red
+  --end END             Last color of gradient (eng. name or #HEX code) - default green
+  --ignored IGNORED [IGNORED ...] - default []
                         List of ignored words
+```
+
+```
+Default values:
+
+filename - text.txt
+amount - 10
+length - 0
+start - red
+end - green
+ignored - []
 ```
 
 # Examples:
