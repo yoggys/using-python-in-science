@@ -39,8 +39,7 @@ if __name__ == "__main__":
         labels, values = countWords(word_list, args.amount, args.length, ["".join(arg) for arg in args.ignored])
     except:
         print("No words found for specified config!")
-        labels = []
-        values = []
+        exit(0)
 
     labels = np.array(labels)
     values = np.array(values)
