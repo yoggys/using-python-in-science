@@ -38,6 +38,7 @@ if __name__ == "__main__":
     try:
         labels, values = countWords(word_list, args.amount, args.length, ["".join(arg) for arg in args.ignored])
     except:
+        print("No words found for specified config!")
         labels = []
         values = []
 
