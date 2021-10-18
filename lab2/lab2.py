@@ -4,7 +4,7 @@ from simulate import Simulation
 def initParser():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--netsize', help="Size of net", type=float, required=True)
+    parser.add_argument('--netsize', help="Size of net", type=int, required=True)
     parser.add_argument('--jvalue', help="Value of J",type=float, required=True)
     parser.add_argument('--bvalue', help="Value of Beta",type=float, required=True)
     parser.add_argument('--hvalue', help="Value of H", type=float, required=True)
