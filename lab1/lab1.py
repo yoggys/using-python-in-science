@@ -35,7 +35,11 @@ if __name__ == "__main__":
 
     f = open(args.filename, "r", encoding="utf-8")
     word_list = f.read().strip().split()
-    labels, values = countWords(word_list, args.amount, args.length, ["".join(arg) for arg in args.ignored])
+    try:
+        labels, values = countWords(word_list, args.amount, args.length, ["".join(arg) for arg in args.ignored])
+    except:
+        labels = []
+        values = []
 
     labels = np.array(labels)
     values = np.array(values)
