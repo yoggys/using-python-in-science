@@ -2,14 +2,25 @@ import numpy as np
 import os
 import imageio
 from rich.progress import Progress, BarColumn, TimeElapsedColumn, TimeRemainingColumn
+from scipy.signal import convolve2d
 from PIL import Image, ImageDraw
 from pathlib import Path
 import random
 import math
+from math import *
 
 class Simulation:
     def __init__(self, size, j, b, h, steps, density, filename):
-        self.path = os.getcwd()+"/out"
+        self.path = os.getcwd()+"\\out"
+        self.filename = filename
+        self.file = None
+    
+        self.steps = steps
+        self.j = j
+        self.b = b
+        self.h = h
+        self.m = 0
+        self.density = density
         self.size = size
         self.amount = size**2
         self.net = [1 for _ in range(int(self.amount*(density)))]+[-1 for _ in range(int(self.amount*(1-density)))]
@@ -19,15 +30,15 @@ class Simulation:
             self.net.append(random.choice([-1,1]))
 
         self.net = random.sample(self.net, self.amount)
-        self.net = [self.net[iterator*size:size+iterator*size] for iterator in range(size)]
+        self.net = np.matrix([self.net[iterator*size:size+iterator*size] for iterator in range(size)])
+        
+        self.energy = self.calculateEnergy()
+        if self.energy is None:
+            print("Simulation initialization failed...")
+            print("[ERR] - Energy calculation failed, wrong H format.")
+            del self
+            return
 
-        self.steps = steps
-        self.j = j
-        self.b = b
-        self.h = h
-        self.m = 0
-        self.density = density
-        self.filename = filename
         print("Simulation initialized...")
 
     def __del__(self):
@@ -47,11 +58,13 @@ class Simulation:
         ) as progress:
             task = progress.add_task(None, total=self.steps)
             while not progress.finished:
+                if self.net.sum() == 1:
+                    progress.remove_task(task)
                 iterator = progress.tasks[0].completed
-                self.calculateMagnetization(iterator)
-                self.iterate()
-                
+                self.calculateMagnetization()
                 self.generate_image(iterator)
+                self.writeFile(iterator)
+                self.iterate()
                 progress.update(task, advance=1)
 
         self.finish()
@@ -61,19 +74,51 @@ class Simulation:
             x = random.randint(0, self.size-1)
             y = random.randint(0, self.size-1)
 
-            before = self.calculateEnergy()
-            self.net[x][y] *= -1
+            self.net[x,y] *= -1
             after = self.calculateEnergy()
-            delta = after-before
+            delta = after-self.energy
             if not (delta < 0):
                 if not (random.random() < math.e**(-self.b*delta)):
-                    self.net[x][y] *= -1
+                    self.net[x,y] *= -1
+                    return
+            self.energy = after
 
     def calculateEnergy(self):
-        return 0
+        tmp = str(self.h)
 
-    def calculateMagnetization(self, step):
-        pass
+        if "TOT" in tmp:
+            tmp = tmp.replace('TOT', str(self.net.sum()))
+
+        if "NB" in tmp:
+            kernel = np.array([
+                [0,1,0],
+                [1,0,1],
+                [0,1,0]
+            ])
+            tmp = tmp.replace('NB', str(convolve2d(self.net, kernel, 'same').sum()))
+
+        if "b" in tmp:
+            tmp = tmp.replace("b", str(self.b))
+        if "j" in tmp:
+            tmp = tmp.replace("j", str(self.j))
+
+        try:
+            total = eval(tmp)
+        except:
+            total = None
+
+        return total
+
+    def calculateMagnetization(self):
+        self.magnetization = self.net.sum()/self.amount
+
+    def writeFile(self, step):
+        if self.file == None:
+            Path(self.path).mkdir(parents=True, exist_ok=True)
+            self.file = open(self.path+f"\\{self.filename}.txt", "w")
+            self.file.write(f"Step  Magnetization   Energy\n")
+
+        self.file.write(f"{step}    {self.magnetization}    {self.energy}\n")
 
     def generate_image(self, iterator):
         Path(self.path).mkdir(parents=True, exist_ok=True)    
@@ -86,17 +131,21 @@ class Simulation:
                 x = 1 if j == 0 else 1+j*3+(j)
                 y = 1 if i == 0 else 1+i*3+(i)
 
-                if self.net[i][j] == 1:
+                if self.net[i,j] == 1:
                     draw.rectangle((x, y,x+2, y+2), fill=(0, 0, 255))
                 else:
                     draw.rectangle((x, y,x+2, y+2), fill=(255, 255, 255))
 
-        img.save(self.path+f'/{self.filename}{iterator}.png')
+        img.save(self.path+f'\\{self.filename}{iterator}.png')
 
     def finish(self):
         print("Simulation finished!")
+        print("Starting generating gif...")
+        self.file.close()
 
         images = []
         for iterator in range(self.steps):
-            images.append(imageio.imread(self.path+f'/{self.filename}{iterator}.png'))
-        imageio.mimsave(self.path+f'/{self.filename}.gif', images)
+            images.append(imageio.imread(self.path+f'\\{self.filename}{iterator}.png'))
+        imageio.mimsave(self.path+f'\\{self.filename}.gif', images, fps=60)
+        print("Generating finished!")
+        

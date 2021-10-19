@@ -1,6 +1,5 @@
 # User ignores
-*.png
-*.gif
+out/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
