@@ -32,10 +32,15 @@ class Simulation:
         self.net = random.sample(self.net, self.amount)
         self.net = np.matrix([self.net[iterator*size:size+iterator*size] for iterator in range(size)])
         
+        if "b" in self.h:
+            self.h = self.h.replace("b", str(self.b))
+        if "j" in self.h:
+            self.h = self.h.replace("j", str(self.j))
+            
         self.energy = self.calculateEnergy()
         if self.energy is None:
             print("Simulation initialization failed...")
-            print("[ERR] - Energy calculation failed, wrong H format.")
+            print("[ERROR] - Energy calculation failed, wrong H format.")
             del self
             return
 
@@ -58,8 +63,9 @@ class Simulation:
         ) as progress:
             task = progress.add_task(None, total=self.steps)
             while not progress.finished:
-                if self.net.sum() == 1:
+                if self.net.sum() == self.amount:
                     progress.remove_task(task)
+                    break
                 iterator = progress.tasks[0].completed
                 self.calculateMagnetization()
                 self.generate_image(iterator)
@@ -96,11 +102,6 @@ class Simulation:
                 [0,1,0]
             ])
             tmp = tmp.replace('NB', str(convolve2d(self.net, kernel, 'same').sum()))
-
-        if "b" in tmp:
-            tmp = tmp.replace("b", str(self.b))
-        if "j" in tmp:
-            tmp = tmp.replace("j", str(self.j))
 
         try:
             total = eval(tmp)
@@ -141,7 +142,11 @@ class Simulation:
     def finish(self):
         print("Simulation finished!")
         print("Starting generating gif...")
-        self.file.close()
+        try:
+            self.file.close()
+        except:
+            print("[WARNING] No images found to create gif...")
+            return
 
         images = []
         for iterator in range(self.steps):
