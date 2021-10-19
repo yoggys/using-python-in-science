@@ -36,7 +36,7 @@ class Simulation:
             self.h = self.h.replace("b", str(self.b))
         if "j" in self.h:
             self.h = self.h.replace("j", str(self.j))
-            
+
         self.energy = self.calculateEnergy()
         if self.energy is None:
             print("Simulation initialization failed...")
@@ -63,10 +63,12 @@ class Simulation:
         ) as progress:
             task = progress.add_task(None, total=self.steps)
             while not progress.finished:
+                iterator = progress.tasks[0].completed
                 if self.net.sum() == self.amount:
                     progress.remove_task(task)
+                    self.steps = iterator
                     break
-                iterator = progress.tasks[0].completed
+                
                 self.calculateMagnetization()
                 self.generate_image(iterator)
                 self.writeFile(iterator)
@@ -81,13 +83,14 @@ class Simulation:
             y = random.randint(0, self.size-1)
 
             self.net[x,y] *= -1
-            after = self.calculateEnergy()
-            delta = after-self.energy
-            if not (delta < 0):
-                if not (random.random() < math.e**(-self.b*delta)):
+            after = self.changeEnergy(x, y, self.net[x,y]<0)
+            if after > 0:
+                if not (random.random() < math.e**(-self.b*after)):
                     self.net[x,y] *= -1
-                    return
-            self.energy = after
+                else:
+                    self.energy = self.energy+after
+            else:
+                self.energy = self.energy+after
 
     def calculateEnergy(self):
         tmp = str(self.h)
@@ -101,14 +104,55 @@ class Simulation:
                 [1,0,1],
                 [0,1,0]
             ])
-            tmp = tmp.replace('NB', str(convolve2d(self.net, kernel, 'same').sum()))
+            out = convolve2d(self.net, kernel, 'same')
+            for i in range(self.size):
+                for j in range(self.size):
+                    links = 4
+                    if i == 0:
+                        links -= 1
+                    elif i == self.size-1:
+                        links -= 1
+
+                    if j == 0:
+                        links -= 1
+                    elif j == self.size-1:
+                        links -= 1
+
+                    out[i,j] = out[i,j] + links*self.net[i,j]
+    
+            tmp = tmp.replace('NB', f"({str(out.sum())})")
 
         try:
-            total = eval(tmp)
+            return eval(tmp)/2
         except:
-            total = None
+            return None
 
-        return total
+    def changeEnergy(self, x, y, is_negative):
+        tmp = str(self.h)
+
+        if "TOT" in tmp:
+            if is_negative:
+                tmp = tmp.replace('TOT', str(-1))
+            else:
+                tmp = tmp.replace('TOT', str(1))
+
+        if "NB" in tmp:
+            links = 4
+            if x == 0:
+                links -= 1
+            elif x == self.size-1:
+                links -= 1
+
+            if y == 0:
+                links -= 1
+            elif y == self.size-1:
+                links -= 1
+
+            if is_negative:
+                tmp = tmp.replace('NB', str(2*links*-1))
+            else:
+                tmp = tmp.replace('NB', str(2*links*1))
+        return eval(tmp)/2
 
     def calculateMagnetization(self):
         self.magnetization = self.net.sum()/self.amount
@@ -151,6 +195,6 @@ class Simulation:
         images = []
         for iterator in range(self.steps):
             images.append(imageio.imread(self.path+f'\\{self.filename}{iterator}.png'))
-        imageio.mimsave(self.path+f'\\{self.filename}.gif', images, fps=60)
+        imageio.mimsave(self.path+f'\\{self.filename}.gif', images, fps=20)
         print("Generating finished!")
         
