@@ -83,14 +83,15 @@ class Simulation:
             y = random.randint(0, self.size-1)
 
             self.net[x,y] *= -1
-            after = self.changeEnergy(x, y, self.net[x,y]<0)
-            if after > 0:
-                if not (random.random() < math.e**(-self.b*after)):
+            after = self.calculateEnergy()
+            delta = after-self.energy
+            if delta > 0:
+                if not (random.random() < math.e**(-self.b*delta)):
                     self.net[x,y] *= -1
                 else:
-                    self.energy = self.energy+after
+                    self.energy = after
             else:
-                self.energy = self.energy+after
+                self.energy = after
 
     def calculateEnergy(self):
         tmp = str(self.h)
@@ -104,21 +105,8 @@ class Simulation:
                 [1,0,1],
                 [0,1,0]
             ])
-            out = convolve2d(self.net, kernel, 'same')
-            for i in range(self.size):
-                for j in range(self.size):
-                    links = 4
-                    if i == 0:
-                        links -= 1
-                    elif i == self.size-1:
-                        links -= 1
-
-                    if j == 0:
-                        links -= 1
-                    elif j == self.size-1:
-                        links -= 1
-
-                    out[i,j] = out[i,j] + links*self.net[i,j]
+            out = convolve2d(self.net, kernel, 'same', 'wrap')
+            out *= self.net
     
             tmp = tmp.replace('NB', f"({str(out.sum())})")
 
@@ -127,32 +115,27 @@ class Simulation:
         except:
             return None
 
-    def changeEnergy(self, x, y, is_negative):
-        tmp = str(self.h)
+    # def changeEnergy(self, x, y, is_negative):
+    #     tmp = str(self.h)
+    #     values = [[x-1,x+1],[y-1,y+1]]
 
-        if "TOT" in tmp:
-            if is_negative:
-                tmp = tmp.replace('TOT', str(-1))
-            else:
-                tmp = tmp.replace('TOT', str(1))
+    #     if "TOT" in tmp:
+    #         if x == 0:
+    #             values[0][0] = self.size-1
+    #         elif x == self.size-1:
+    #             values[0][1] = 0
 
-        if "NB" in tmp:
-            links = 4
-            if x == 0:
-                links -= 1
-            elif x == self.size-1:
-                links -= 1
+    #         if y == 0:
+    #             values[1][0] = self.size-1
+    #         elif y == self.size-1:
+    #             values[1][1] = 0
 
-            if y == 0:
-                links -= 1
-            elif y == self.size-1:
-                links -= 1
-
-            if is_negative:
-                tmp = tmp.replace('NB', str(2*links*-1))
-            else:
-                tmp = tmp.replace('NB', str(2*links*1))
-        return eval(tmp)/2
+    #     if "NB" in tmp:
+    #         if is_negative:
+    #             tmp = tmp.replace('NB', str(2*4*-1))
+    #         else:
+    #             tmp = tmp.replace('NB', str(2*4*1))
+    #     return eval(tmp)/2
 
     def calculateMagnetization(self):
         self.magnetization = self.net.sum()/self.amount
