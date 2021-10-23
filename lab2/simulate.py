@@ -38,6 +38,7 @@ class Simulation:
             self.h = self.h.replace("j", str(self.j))
 
         self.energy = self.calculateEnergy()
+
         if self.energy is None:
             print("Simulation initialization failed...")
             print("[ERROR] - Energy calculation failed, wrong H format.")
@@ -114,28 +115,6 @@ class Simulation:
             return eval(tmp)/2
         except:
             return None
-
-    # def changeEnergy(self, x, y, is_negative):
-    #     tmp = str(self.h)
-    #     values = [[x-1,x+1],[y-1,y+1]]
-
-    #     if "TOT" in tmp:
-    #         if x == 0:
-    #             values[0][0] = self.size-1
-    #         elif x == self.size-1:
-    #             values[0][1] = 0
-
-    #         if y == 0:
-    #             values[1][0] = self.size-1
-    #         elif y == self.size-1:
-    #             values[1][1] = 0
-
-    #     if "NB" in tmp:
-    #         if is_negative:
-    #             tmp = tmp.replace('NB', str(2*4*-1))
-    #         else:
-    #             tmp = tmp.replace('NB', str(2*4*1))
-    #     return eval(tmp)/2
 
     def calculateMagnetization(self):
         self.magnetization = self.net.sum()/self.amount
