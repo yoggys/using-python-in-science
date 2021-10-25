@@ -20,6 +20,9 @@ if __name__ == "__main__":
 
     try:
         conn = re.get(args.url)
+        conn.raise_for_status()
+    except re.exceptions.HTTPError as E:
+        print(E)
     except ConnectionError:
         print("Website not found!")
     else:
