@@ -25,5 +25,7 @@ if __name__ == "__main__":
     else:
         if conn.status_code == 200:
             soup = BeautifulSoup(conn.text, "html.parser")
-            with open(f"{args.out}.json", "w", encoding="utf-8") as f:
-                f.write(json.dumps(soup.decode(True, "utf-8")))
+            decoded = soup.decode(True, "utf-8")
+            
+            with open(f"{args.out}.json", "w", encoding="utf-8") as file:
+                json.dump(decoded, file, indent=4, sort_keys=True)
