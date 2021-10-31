@@ -1,4 +1,4 @@
-## Lab3+ - Web scraping - part II (static content).
+## Lab3+ - Web scraping - part Ia (static content).
 
 For more info run:
 ```
