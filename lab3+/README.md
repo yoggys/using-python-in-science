@@ -16,5 +16,5 @@ Required arguments:
 
 - Output .json file: 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/61660055/138725458-5f7f94d9-0e4a-4516-a1d9-d119edb8f457.png" alt="Output .json file"/>
+  <img src="https://user-images.githubusercontent.com/61660055/139582924-ee5e5d95-7160-42db-904b-56c8d7b978a0.png" alt="Output .json file"/>
 </p>
