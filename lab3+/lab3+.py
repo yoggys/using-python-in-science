@@ -8,9 +8,7 @@ def initParser():
     parser._action_groups.pop()
 
     required = parser.add_argument_group('required arguments')
-    optional = parser.add_argument_group('optional arguments')
-    optional.add_argument('--out', help="Name of out file", type=str, default='out')
-    # required.add_argument('--out', help="Name of out file", type=str, required=True)
+    required.add_argument('--out', help="Name of out file", type=str, required=True)
 
     return parser
 
