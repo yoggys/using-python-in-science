@@ -1,4 +1,5 @@
-import requests as re
+import requests as req
+import re
 import json
 import argparse
 from bs4 import BeautifulSoup
@@ -21,30 +22,65 @@ if __name__ == "__main__":
 
     for index in range(max_index):
         try:
-            conn = re.get(f"https://profmrow.fans/pwzn/toc{index+1}/")
+            if index < 3:
+                conn = req.get(f"https://profmrow.fans/pwzn/toc{index+1}/")
+            else:
+                conn = req.get(f"https://profmrow.fans/pwzn/chuck_service/?mode=years")
+
             conn.raise_for_status()
-        except re.exceptions.HTTPError as E:
+        except req.exceptions.HTTPError as E:
             print(E)
         except ConnectionError:
             print("Website not found...")
         else:
             if conn.status_code == 200:
-                soup = BeautifulSoup(conn.content.decode(conn.apparent_encoding), "html.parser")
-                elements = [val.text for val in soup.findAll("option")]
+                if index < 3:
+                    soup = BeautifulSoup(conn.content.decode(conn.apparent_encoding), "html.parser")
+                    elements = [val.text for val in soup.findAll("option")]
+                elif index == 3:
+                    soup = BeautifulSoup(conn.content.decode(conn.apparent_encoding), "html.parser").contents
+                    elements = re.findall(r"\d+", conn.content.decode(conn.apparent_encoding))
+                else:
+                    elements = re.findall(r"\d+", conn.content.decode(conn.apparent_encoding))
+
                 if elements is None:
                     continue
 
                 for element in elements:
                     try:
-                        page = re.get(f"https://profmrow.fans/pwzn/toc1/?year={element}")
+                        if index == 0:
+                            page = req.get(f"https://profmrow.fans/pwzn/toc{index+1}/?year={element}")
+                            soup = BeautifulSoup(page.content.decode(page.apparent_encoding), "html.parser")
+                            videos = [val.text for val in soup.findAll("div", class_="text-center mb-2")]
+                        elif index == 1:
+                            page = req.post(f"https://profmrow.fans/pwzn/toc{index+1}/", data={"year": element})
+                            soup = BeautifulSoup(page.content.decode(page.apparent_encoding), "html.parser")
+                            videos = [val.text for val in soup.findAll("div", class_="text-center mb-2")]
+                        elif index == 2:
+                            page = req.session()
+                            page = page.get(f"https://profmrow.fans/pwzn/toc{index+1}/?year={element}", headers={"cookie": "Motto=Praise%20the%20Chuck"})
+                            soup = BeautifulSoup(page.content.decode(conn.apparent_encoding), "html.parser")
+                            videos = [val.text for val in soup.findAll("div", class_="text-center mb-2")]
+
+                        elif index == 3:
+                            headers = {
+                                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36'
+                            }
+                            
+                            page = req.post(f"https://profmrow.fans/pwzn/toc{index+1}/", data={"year": element}, headers=headers)
+                            soup = BeautifulSoup(page.content, "html.parser")
+                            videos = [val.text for val in soup.findAll("div", class_="text-center mb-2")]
+
+                        elif index == 4:
+                            page = req.get(f"https://profmrow.fans/pwzn/chuck_service/?mode=year&year={element}")
+                            videos = [val['title'] for val in page.json()]       
+
                         page.raise_for_status()
-                    except re.exceptions.HTTPError as E:
+                    except req.exceptions.HTTPError as E:
                         print(E)
                     except ConnectionError:
                         print(f"Website not found (for value {element})...")
                     
-                    soup = BeautifulSoup(page.content.decode(page.apparent_encoding), "html.parser")
-                    videos = [val.text for val in soup.findAll("div", class_="text-center mb-2")]
                     if videos is None:
                         continue
                     for video in videos:

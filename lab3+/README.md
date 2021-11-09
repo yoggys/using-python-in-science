@@ -12,7 +12,7 @@ Required arguments:
 
 # Examples:
 
-```python lab3.py --out filename```
+```python lab3+.py --out filename```
 
 - Output .json file: 
 <p align="center">
