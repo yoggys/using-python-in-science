@@ -23,5 +23,5 @@ out - 'out'
 
 - Output .json file: 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/61660055/138725458-5f7f94d9-0e4a-4516-a1d9-d119edb8f457.png" alt="Output .json file"/>
+  <img src="https://user-images.githubusercontent.com/61660055/143769388-bc7b6640-98b2-4dd1-ab1d-c543d9dacdf6.png" alt="Output .json file"/>
 </p>
