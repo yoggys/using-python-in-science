@@ -25,5 +25,5 @@ delay - 1.s
 
 - Output console example: 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/61660055/143769388-bc7b6640-98b2-4dd1-ab1d-c543d9dacdf6.png" alt="Output console"/>
+  <img src="https://user-images.githubusercontent.com/61660055/143771114-ed38ff08-7895-4089-9b66-ef8cfa7d397c.png" alt="Output console"/>
 </p>
