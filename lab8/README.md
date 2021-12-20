@@ -25,9 +25,9 @@ out - "out"
 
 - Output images example: 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/61660055/143771114-ed38ff08-7895-4089-9b66-ef8cfa7d397c.png" alt="Output images in folder"/>
+  <img src="https://user-images.githubusercontent.com/61660055/146804950-64388026-b075-4fa6-bdd0-40bb1fe9940b.png" alt="Output images in folder"/>
 </p>
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/61660055/143771114-ed38ff08-7895-4089-9b66-ef8cfa7d397c.png" alt="Output image"/>
+  <img src="https://user-images.githubusercontent.com/61660055/146804961-7af6beff-3951-4cb6-98b6-05ba23a457a4.png" alt="Output image"/>
 </p>
