@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw
 from pathlib import Path
 import random
 import math
-from numba import jit
+import numba
 from math import *
 
 class Simulation:

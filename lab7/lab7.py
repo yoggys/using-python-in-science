@@ -1,5 +1,9 @@
+import numba
+import numpy as np
 import argparse
-from simulate import Simulation
+from math import exp, log, e, sqrt
+
+kT = 2 / log(1 + sqrt(2), e)
 
 def initParser():
     parser = argparse.ArgumentParser()
@@ -17,20 +21,54 @@ def initParser():
     optional.add_argument('--filename', help="Name of out images", type=str, default='step')
     return parser
 
-if __name__ == "__main__":
+@numba.jit(nopython=True)
+def _update(net, i, j, eq):
+    n, m = net.shape
+
+    if "TOT" in eq:
+        eq = eq.replace('TOT', str(net.sum()))
+
+    if "NB" in eq:
+        eq = eq.replace('TOT', 
+            str(net[i, j] * (
+                     net[(i-1)%n, (j-1)%m]
+                   + net[(i-1)%n,  j     ]
+                   + net[(i-1)%n, (j+1)%m]
+                   + net[ i     , (j-1)%m]
+                   + net[ i     , (j+1)%m]
+                   + net[(i+1)%n, (j-1)%m]
+                   + net[(i+1)%n,  j     ]
+                   + net[(i+1)%n, (j+1)%m]
+        )))
+
+    dE = exec(eq)/2
+
+    if dE <= 0 or exp(-dE / kT) > np.random.random():
+        net[i, j] *= -1
+
+@numba.jit(nopython=True)
+def update(net, eq):
+    n, m = net.shape
+
+    for i in range(n):
+        for j in range(0, m, 2):  # Even columns first to avoid overlap
+            _update(net, i, j, eq)
+
+    for i in range(n):
+        for j in range(1, m, 2):  # Odd columns second to avoid overlap
+            _update(net, i, j, eq)
+
+if __name__ == '__main__':
     parser = initParser()
     args = parser.parse_args()
 
-    s = Simulation(
-        size=args.netsize,
-        j=args.jval,
-        b=args.bval,
-        h=args.heq,
-        steps=args.steps,
-        density=args.density,
-        filename=args.filename
-    )
+    eq = args.heq
+    if "b" in eq:
+        eq = eq.replace("b", str(args.bval))
+    if "j" in eq:
+        eq = eq.replace("j", str(args.jval))
 
-    s.start()
-    del s
-    
+    net = np.random.randint(2, size=(1000, 1000)).astype('i1')
+    net[net == 0] = -1
+    for i in range(100):
+        update(net, eq)
